@@ -1,57 +1,48 @@
-
+;
 public class Card {
 	// variable
 	private String suit;
 	private int rank;
 	private int value;
 	private String[] rankNames = { "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King" };
-	public enum SuitRank { CLUBS, DIAMONDS, HEARTS, SPADES;
-	private SuitRank suits;
-	
-	}
 	// Constructors
 	public Card(String suit, int rank) {
 		this.suit = suit;
-		this.rank = rank;
-		if (rank == 1) {
-		    this.value = 1; // Ace = value of 1
-		} else if (rank >= 2 && rank <= 10) {
-		    this.value = rank; // determine that face card has it own faced value from 2 - 10
-		} else if (rank >= 11 && rank <= 13) {
-		    this.value = 10; // Jack, Queen, and King valued at 10
-		} else {
-		    this.value = 0; // invalid rank
-		}
+	    this.rank = rank;
+	    if (rank == 1) {
+	        this.value = 1; // Ace = value of 1
+	    } else if (rank >= 2 && rank <= 10) {
+	        this.value = rank; // numbered cards have their face value
+	    } else if (rank >= 11 && rank <= 12) {
+	        this.value = 10; // Jack and Queen have a value of 10
+	    } else if (rank == 13) {
+	        this.value = 10; // King has a value of 10
+	    } else {
+	        // handle invalid rank
+	    }
 	}
-
-	public Card(int value, String suit, int rank) {
+	public Card(int value, String suit) {
 		this.value = value;
 		this.suit = suit;
-        this.rank = rank;
-
-        switch (suit) {
-            case "Spades":
-                this.value = 4;
-                break;
-            case "Hearts":
-                this.value = 3;
-                break;
-            case "Diamonds":
-                this.value = 2;
-                break;
-            case "Clubs":
-                this.value = 1;
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid suit: " + suit);
-        }
-    }
-	
+	}
 
 	// getter and setter
+	public SuitRank getSuitRank() {
+	    switch (this.suit) {
+	        case "CLUBS":
+	            return SuitRank.CLUBS;
+	        case "DIAMONDS":
+	            return SuitRank.DIAMONDS;
+	        case "HEARTS":
+	            return SuitRank.HEARTS;
+	        case "SPADES":
+	            return SuitRank.SPADES;
+	        default:
+	            throw new IllegalArgumentException("Invalid suit: " + this.suit);
+	    }
+	}
 	public String getSuit() {
 		return suit;
-		
 	}
 
 	public void setSuit(String suit) {
@@ -59,10 +50,17 @@ public class Card {
 	}
 
 	public int getRank() {
-		return rank;
-		
+		  switch (rank) {
+	        case 10: // Jack
+	            return 11;
+	        case 12: // Queen
+	            return 12;
+	        case 13: // King
+	            return 13;
+	        default:
+	            return rank;
+	    }
 	}
-
 	public void setRank(int rank) {
 		this.rank = rank;
 	}
@@ -80,27 +78,30 @@ public class Card {
 		String rankName = rankNames[rank - 1];
 		return " <" + suit + " " + rankName + "> ";
 	}
-	public SuitRank getSuitRank() {
-	    switch (suit) {
-	        case "clubs":
-	            return SuitRank.CLUBS;
-	        case "diamonds":
-	            return SuitRank.DIAMONDS;
-	        case "hearts":
-	            return SuitRank.HEARTS;
-	        case "spades":
-	            return SuitRank.SPADES;
-	        default:
-	            return null;}
-	    }
 	
+		public enum SuitRank {
+		    CLUBS(1),
+		    DIAMONDS(2),
+		    HEARTS(3),
+		    SPADES(4);
 
-	        // compare the suits based on the priority given in the prompt
-	   
-	public int compareSuit(Card otherCard) {
-        return Integer.compare(this.value, otherCard.value);
-    }
-	    
+		    private final int rank;
+
+		    private SuitRank(int rank) {
+		        this.rank = rank;
+		    }
+
+		    public int getRank() {
+		        return rank;
+		    }
+		}
+
+	
+		public int compareTo(Card other) {
+		    if (this.rank != other.rank) { // Different face values
+		        return Integer.compare(this.rank, other.rank);
+		    } else { // Same face value
+		        return this.getSuitRank().getRank() - other.getSuitRank().getRank();
+		    }
+		}
 }
-
-	    
